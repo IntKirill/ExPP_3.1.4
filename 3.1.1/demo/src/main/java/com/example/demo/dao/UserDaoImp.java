@@ -18,20 +18,19 @@ public class UserDaoImp implements UserDao {
     @PersistenceContext
     public EntityManager entityManager;
 
-    @Transactional
+
     @Override
-    public void save (User user) {
+    public void save(User user) {
         entityManager.persist(user);
         //добавление
     }
-    @Transactional
-@Override
-public User findById(Long id) {
+
+    @Override
+    public User findById(Long id) {
         return entityManager.find(User.class, id);
         //получение
     }
 
-    @Transactional
     @Override
     public void removeUserById(long id) {
         User user = entityManager.find(User.class, id);
@@ -39,13 +38,13 @@ public User findById(Long id) {
         //удаление по ид
     }
 
-    @Transactional
+
     @Override
     public void updateUser(User user) {
         entityManager.merge(user);
         //изменение по ид
     }
-    @Transactional
+
     @Override
     public List<User> findAll() {
         return entityManager.createQuery("FROM User", User.class).getResultList();

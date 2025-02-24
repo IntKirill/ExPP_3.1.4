@@ -14,8 +14,8 @@ import java.util.List;
 public class UserServiceImp implements UserService {
 
 
-@Autowired
-public UserDao userDao;
+    @Autowired
+    public UserDao userDao;
 
     @Transactional
     @Override
@@ -23,7 +23,8 @@ public UserDao userDao;
         userDao.save(user);
 
     }
-@Transactional
+
+    @Transactional
     @Override
     public User findById(Long id) {
         return userDao.findById(id);
@@ -37,14 +38,14 @@ public UserDao userDao;
     }
 
 
-
-@Transactional
+    @Transactional
     @Override
     public void updateUser(User user) {
         userDao.updateUser(user);
 
     }
-@Transactional
+
+    @Transactional
     @Override
     public List<User> findAll() {
         return userDao.findAll();

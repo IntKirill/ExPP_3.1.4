@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-
 @Controller
 public class UserController {
 
@@ -26,18 +25,17 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-@GetMapping("/")
-public String getAllUsers(Model model) {
+
+    @GetMapping("/")
+    public String getAllUsers(Model model) {
         model.addAttribute("users", userService.findAll());
         return "users";
-        //главная странница
-}
+    }
 
 
-@GetMapping("/new")
+    @GetMapping("/new")
     public String CreateUserForm(@ModelAttribute("user") User user) {
         return "new";
-        //создание пользователя
     }
 
     @PostMapping("/new")
@@ -54,14 +52,12 @@ public String getAllUsers(Model model) {
     public String deleteUser(@RequestParam("id") long id) {
         userService.removeUserById(id);
         return "redirect:/";
-        //удаление нового пользователя по ид
     }
 
-   @GetMapping("/update")
+    @GetMapping("/update")
     public String getEditUserForm(Model model, @RequestParam("id") long id) {
         model.addAttribute("user", userService.findById(id));
         return "update";
-       //Получение пользователя которого хотим изменить
     }
 
     @PostMapping("/update")
@@ -72,8 +68,6 @@ public String getAllUsers(Model model) {
         }
         userService.updateUser(user);
         return "redirect:/";
-        //изменяем полученного пользователя
-
     }
 }
 

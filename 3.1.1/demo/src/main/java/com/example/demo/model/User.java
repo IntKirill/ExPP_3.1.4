@@ -11,7 +11,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long  id;
+    private long id;
 
     @NotBlank(message = "Null!")
     @Column(name = "name")

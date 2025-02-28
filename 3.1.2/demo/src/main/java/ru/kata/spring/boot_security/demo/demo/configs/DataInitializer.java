@@ -10,14 +10,6 @@ import ru.kata.spring.boot_security.demo.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.demo.repositories.UserRepository;
 
 import java.util.Set;
-
-
-//Этот класс DataInitializer предназначен для
-// инициализации базы данных начальными данными
-// при запуске приложения. Он проверяет,
-// существуют ли роли и администратор в
-// базе, и если нет, создает их
-
 @Configuration
 public class DataInitializer {
 
@@ -29,38 +21,35 @@ public class DataInitializer {
         return args -> initializeData(userRepository, roleRepository, passwordEncoder);
     }
 
-    private void initializeData(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        // Добавляем роли, если их нет
+    private void initializeData(UserRepository userRepository
+            , RoleRepository roleRepository
+            , PasswordEncoder passwordEncoder) {
+
         Role userRole = roleRepository
                 .findByName("ROLE_USER")
                 .orElseGet(() -> roleRepository
-                        .save(new Role("ROLE_USER")));//Выполняется создание роли
+                        .save(new Role("ROLE_USER")));
         Role adminRole = roleRepository
                 .findByName("ROLE_ADMIN")
                 .orElseGet(() -> roleRepository
-                        .save(new Role("ROLE_ADMIN")));//Выполняется создание роли
+                        .save(new Role("ROLE_ADMIN")));
 
-        // Добавляем пользователя-админа, если его нет
         if (userRepository.findByUsername("admin").isEmpty()) {
             User admin = new User();
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin123"));
-            admin.setRoles(Set.of(adminRole, userRole)); // Админ получает обе роли
+            admin.setRoles(Set.of(adminRole, userRole));
+            admin.setCar("Lada Vesta");
+            admin.setCountry("United States");
             userRepository.save(admin);
-            //Создается новый объект User с логином "admin".
-            //setPassword(passwordEncoder.encode("admin123"))
-            //Пароль "admin123" хешируется с помощью BCryptPasswordEncoder,
-            // чтобы он не хранился в открытом виде.
-            //setRoles(Set.of(adminRole, userRole))
-            //Администратор получает две роли: "ROLE_ADMIN" и "ROLE_USER".
-            //userRepository.save(admin)
-            //Админ сохраняется в базу данных.
         }
         if (userRepository.findByUsername("user").isEmpty()) {
             User user = new User();
-            user.setUsername("user"); // Имя обычного пользователя
-            user.setPassword(passwordEncoder.encode("user123")); // Пароль обычного пользователя
-            user.setRoles(Set.of(userRole)); // Назначаем только роль ROLE_USER
+            user.setUsername("user");
+            user.setPassword(passwordEncoder.encode("user123"));
+            user.setRoles(Set.of(userRole));
+            user.setCar("Lada Granta");
+            user.setCountry("Germany");
             userRepository.save(user);
         }
     }

@@ -7,9 +7,4 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
-
 }
-//UserRepository — это интерфейс, который отвечает за взаимодействие с базой данных.
-//extends JpaRepository<User, Long> — означает, что этот репозиторий наследуется от
-// JpaRepository, что дает ему уже готовые методы CRUD
-// (Create, Read, Update, Delete) для сущности User.

@@ -7,10 +7,10 @@
 <body>
 <h2>Добавить нового пользователя</h2>
 
-<form th:action="@{/new}" th:object="${user}" method="post">
-    <label for="name">Имя:</label>
-    <input type="text" id="name" th:field="*{name}"  />
-    <p class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+<form th:action="@{/admin/new}" th:object="${user}" method="post">
+    <label for="username">Имя:</label>
+    <input type="text" id="username" th:field="*{username}"  />
+    <p class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
 
     <br/>
 
@@ -24,7 +24,13 @@
     <p class="error" th:if="${#fields.hasErrors('car')}" th:errors="*{car}"></p>
     <br/>
 
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" th:field="*{password}"  />
+    <p class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+    <br/>
+
     <button type="submit">Сохранить</button>
 </form>
+<a th:href="@{/logout}">Сменить пользователя</a>
 </body>
 </html>

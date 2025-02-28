@@ -3,12 +3,9 @@ package ru.kata.spring.boot_security.demo.demo.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -19,17 +16,22 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Поле не может быть пустым")
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(name = "country",unique = true)
+    @NotBlank(message = "Поле не может быть пустым")
+    @Column(name = "country")
     private String country;
 
-    @Column(name = "car",unique = true)
+
+    @NotBlank(message = "Поле не может быть пустым")
+    @Column(name = "car")
     private String car;
 
     @Column(nullable = false)
     private String password;
+
 
     public Set<Role> getRoles() {
         return roles;
@@ -75,17 +77,17 @@ public class User implements UserDetails {
     }
 
 
-    @ManyToMany(fetch = FetchType.EAGER) // Загружаем роли вместе с пользователем
+    @ManyToMany(fetch = FetchType.LAZY) //
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @Override
     public Set<Role> getAuthorities() {
-        return roles; // Spring Security будет использовать роли для проверки прав
+        return roles;
     }
 
 

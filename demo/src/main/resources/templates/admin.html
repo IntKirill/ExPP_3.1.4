@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>User List</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
 </head>
 <body>
 
@@ -100,42 +99,32 @@ with roles:
                                             <td th:text="${user.car}"></td>
                                             <td th:text="${user.roles}"></td>
                                             <td th:text="${user.password}"></td>
-
                                             <td>
-                                                <!-- Кнопка для открытия модального окна -->
+                                                <!-- Кнопка для открытия модального окна добавления пользователя -->
                                                 <button class="btn btn-primary btn-sm"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#updateModal"
-                                                        th:data-id="${user.id}"
-                                                        th:data-username="${user.username}"
-                                                        th:data-country="${user.country}"
-                                                        th:data-car="${user.car}"
-                                                        th:data-password="${user.password}">
+                                                        th:data-bs-target="'#updateModal-' + ${user.id}">
                                                     Update
-
                                                 </button>
                                             </td>
-
                                             <td>
                                                 <!-- Кнопка Delete -->
                                                 <button class="btn btn-danger btn-sm"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModal"
-                                                        th:data-id="${user.id}"
-                                                        th:data-username="${user.username}"
-                                                        th:data-country="${user.country}"
-                                                        th:data-car="${user.car}"
-                                                        th:data-password="${user.password}">
+                                                        th:data-bs-target="'#deleteModal-' + ${user.id}">
                                                     Delete
                                                 </button>
                                             </td>
-
                                         </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                            </div> <!-- Закрываем <div class="card"> -->
-                        </div> <!-- Закрываем <div class="tab-pane fade show active" id="usersTable"> -->
+                            </div>
+                        </div>
+
+
+                        <!-- Добавляем нового пользователя -->
+
                         <div class="tab-pane fade "
                              id="newUser"
                              role="tabpanel"
@@ -145,82 +134,77 @@ with roles:
                                     <h2 class="text-title">Add new</h2>
                                 </div>
 
-                                    <form th:action="@{/admin/new}"  method="post">
-                                        <input type="hidden" name="id" id="Newid"/>
-                                        <div class="d-flex flex-column align-items-center">
-                                            <div class="mb-3">
-                                                <label for="username" class="form-label fw-bold text-center w-100">Username</label>
-                                                <input type="text" id="newUsername"  class="form-control" name="username"/>
-                                            </div>
+                                <form th:action="@{/admin/new}" method="post">
+                                    <input type="hidden" name="id" id="newId"/>
 
-
-
-
-
-                                            <div class="mb-3">
-                                                <label for="country" class="form-label fw-bold text-center w-100">Country</label>
-                                                <input type="text" class="form-control" name="country" id="Newcountry"/>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="car" class="form-label fw-bold text-center w-100">Car</label>
-                                                <input type="text" class="form-control" name="car" id="Newcar"/>
-                                            </div>
-
-
-                                            <div class="mb-3">
-                                                <label for="password" class="form-label fw-bold text-center w-100">Password</label>
-                                                <input type="password" class="form-control" name="password" id="Newpassword"/>
-                                            </div>
+                                    <div class="d-flex flex-column align-items-center">
+                                        <div class="mb-3">
+                                            <label for="newUsername" class="form-label fw-bold text-center w-100">Username</label>
+                                            <input type="text" id="newUsername" class="form-control" name="username"/>
                                         </div>
-                                        <div class="text-center">
-                                            <button type="submit" class="btn btn-primary">Сохранить</button>
+
+                                        <div class="mb-3">
+                                            <label for="newCountry"
+                                                   class="form-label fw-bold text-center w-100">Country</label>
+                                            <input type="text" class="form-control" name="country" id="newCountry"/>
                                         </div>
-                                    </form>
-                                </div>
+
+                                        <div class="mb-3">
+                                            <label for="newCar" class="form-label fw-bold text-center w-100">Car</label>
+                                            <input type="text" class="form-control" name="car" id="newCar"/>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="newPassword" class="form-label fw-bold text-center w-100">Password</label>
+                                            <input type="password" class="form-control" name="password"
+                                                   id="newPassword"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Add new</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-
-                    </div> <!-- Закрываем <div class="tab-content"> -->
-                </div> <!-- Закрываем <div class="tab-pane fade show active" id="admin"> -->
-            </div> <!-- Закрываем <div class="container-fluid col-10 bg-light"> -->
-        </div> <!-- Закрываем <div class="row"> -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-
-
 <!-- Модальное окно для обновления пользователя -->
-<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+
+<div th:each="user : ${users}" th:id="'updateModal-' + ${user.id}" class="modal fade" tabindex="-1"
+     aria-labelledby="updateModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="updateModalLabel">Update User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Update User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form th:action="@{/admin/update}" method="post">
-                    <input type="hidden" name="id" id="id"/>
+                    <input type="hidden" name="id" th:value="${user.id}"/>
 
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username" id="username"/>
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" th:value="${user.username}"/>
                     </div>
                     <div class="mb-3">
-                        <label for="country" class="form-label">Country</label>
-                        <input type="text" class="form-control" name="country" id="country"/>
+                        <label class="form-label">Country</label>
+                        <input type="text" class="form-control" name="country" th:value="${user.country}"/>
                     </div>
                     <div class="mb-3">
-                        <label for="car" class="form-label">Car</label>
-                        <input type="text" class="form-control" name="car" id="car"/>
+                        <label class="form-label">Car</label>
+                        <input type="text" class="form-control" name="car" th:value="${user.car}"/>
                     </div>
-
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="text" class="form-control" name="password" id="password" />
-
-
-
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Enter new password"/>
                     </div>
+
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
             </div>
@@ -229,38 +213,36 @@ with roles:
 </div>
 
 <!-- Модальное окно для удаления пользователя -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div th:each="user : ${users}" th:id="'deleteModal-' + ${user.id}" class="modal fade" tabindex="-1"
+     aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Удалить пользователя</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Удалить пользователя</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="deleteForm" th:action="@{/admin/delete}" method="post">
-                    <input type="hidden" name="id" id="deleteUserId"/>
+                <form th:action="@{/admin/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${user.id}"/>
 
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="deleteUsername" readonly/>
-                    </div>
-
-
-
-
-                    <div class="mb-3">
-                        <label for="country" class="form-label">Country</label>
-                        <input type="text" class="form-control" id="deleteCountry" readonly/>
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" th:value="${user.username}" readonly/>
                     </div>
 
                     <div class="mb-3">
-                        <label for="car" class="form-label">Car</label>
-                        <input type="text" class="form-control" id="deleteCar" readonly/>
+                        <label class="form-label">Country</label>
+                        <input type="text" class="form-control" th:value="${user.country}" readonly/>
                     </div>
 
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="deletePassword" readonly/>
+                        <label class="form-label">Car</label>
+                        <input type="text" class="form-control" th:value="${user.car}" readonly/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" placeholder="password is hidden" readonly/>
                     </div>
 
                     <div class="text-center">
@@ -275,34 +257,5 @@ with roles:
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Используем Bootstrap для передачи данных в модальное окно
-    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
-        button.addEventListener('click', function () {
-
-            const userId = this.getAttribute('data-id');
-            const username = this.getAttribute('data-username');
-            const country = this.getAttribute('data-country');
-            const car = this.getAttribute('data-car');
-            const password = this.getAttribute('data-password');
-
-// Теперь заполняем поля модального окна правильными id
-            if (this.getAttribute('data-bs-target') === "#updateModal") {
-                document.getElementById('id').value = userId;
-                document.getElementById('username').value = username;
-                document.getElementById('country').value = country;
-                document.getElementById('car').value = car;
-                document.getElementById('password').value = password;
-            } else if (this.getAttribute('data-bs-target') === "#deleteModal") {
-                document.getElementById('deleteUserId').value = userId;
-                document.getElementById('deleteUsername').value = username;
-                document.getElementById('deleteCountry').value = country;
-                document.getElementById('deleteCar').value = car;
-                document.getElementById('deletePassword').value = password;
-            }
-
-        });
-    });
-</script>
 </body>
 </html>

@@ -189,20 +189,21 @@ with roles:
                     <input type="hidden" name="id" th:value="${user.id}"/>
 
                     <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username" th:value="${user.username}"/>
+                        <label for="UpdateUsername" class="form-label">Username</label>
+                        <input id="UpdateUsername" type="text" class="form-control" name="username" th:value="${user.username}"/>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="UpdateCountry" class="form-label">Country</label>
+                        <input  id="UpdateCountry" type="text" class="form-control" name="country" th:value="${user.country}"/>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Country</label>
-                        <input type="text" class="form-control" name="country" th:value="${user.country}"/>
+                        <label for="UpdateCar" class="form-label">Car</label>
+                        <input id="UpdateCar" type="text" class="form-control" name="car" th:value="${user.car}"/>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Car</label>
-                        <input type="text" class="form-control" name="car" th:value="${user.car}"/>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" placeholder="Enter new password"/>
+                        <label for="UpdatePassword" class="form-label">Password</label>
+                        <input id="UpdatePassword" type="password" class="form-control" name="password" placeholder="Enter new password"/>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Update</button>
@@ -226,23 +227,23 @@ with roles:
                     <input type="hidden" name="id" th:value="${user.id}"/>
 
                     <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control" th:value="${user.username}" readonly/>
+                        <label for="DeleteUsername" class="form-label">Username</label>
+                        <input id="DeleteUsername" type="text" class="form-control" th:value="${user.username}" readonly/>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Country</label>
-                        <input type="text" class="form-control" th:value="${user.country}" readonly/>
+                        <label for="DeleteCountry" class="form-label">Country</label>
+                        <input  id="DeleteCountry" type="text" class="form-control" th:value="${user.country}" readonly/>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Car</label>
-                        <input type="text" class="form-control" th:value="${user.car}" readonly/>
+                        <label  for="DeleteCar" class="form-label">Car</label>
+                        <input  id="DeleteCar" type="text" class="form-control" th:value="${user.car}" readonly/>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" placeholder="password is hidden" readonly/>
+                        <label  for="DeletePassword" class="form-label">Password</label>
+                        <input  id="DeletePassword" type="password" class="form-control" placeholder="password is hidden" readonly/>
                     </div>
 
                     <div class="text-center">

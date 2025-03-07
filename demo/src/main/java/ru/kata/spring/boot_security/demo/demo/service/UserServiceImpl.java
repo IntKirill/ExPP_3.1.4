@@ -41,9 +41,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void saveUser(User user) {
-        Role userRole = roleService.findByName("ROLE_USER")
+      /*   Role userRole = roleService.findByName("ROLE_USER")
                 .orElseThrow(() -> new IllegalStateException("Role 'ROLE_USER' not found"));
-        user.getRoles().add(userRole);
+        user.getRoles().add(userRole);*/
 
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));

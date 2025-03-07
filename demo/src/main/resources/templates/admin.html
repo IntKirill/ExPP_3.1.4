@@ -134,7 +134,6 @@ with roles:
                                     <h2 class="text-title">Add new</h2>
                                 </div>
 
-<p>При создании нового пользователя роль User присваивается автоматически </p>
                                 <form th:action="@{/admin/new}" method="post">
                                     <input type="hidden" name="id" id="newId"/>
 
@@ -153,6 +152,16 @@ with roles:
                                         <div class="mb-3">
                                             <label for="newCar" class="form-label fw-bold text-center w-100">Car</label>
                                             <input type="text" class="form-control" name="car" id="newCar"/>
+                                        </div>
+
+
+
+                                        <div class="mb-3 col-md-2 text-center">
+                                            <label class="form-label" for="roleNew"><b>Role</b></label>
+                                            <select id="roleNew" name="roles" class="form-control w-100" multiple size="2">
+                                                <option value="2">ADMIN</option>
+                                                <option value="1">USER</option>
+                                            </select>
                                         </div>
 
                                         <div class="mb-3">
@@ -189,36 +198,31 @@ with roles:
                 <form th:action="@{/admin/update}" method="post">
                     <input type="hidden" name="id" th:value="${user.id}"/>
 
-                    <div class="mb-3">
-                        <label for="UpdateUsername" class="form-label">Username</label>
+                    <div class="mb-3 text-center">
+                        <label for="UpdateUsername" class="form-label" style="font-weight: bold;">Username</label>
                         <input id="UpdateUsername" type="text" class="form-control" name="username" th:value="${user.username}"/>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="UpdateCountry" class="form-label">Country</label>
+                    <div class="mb-3 text-center">
+                        <label for="UpdateCountry" class="form-label" style="font-weight: bold;">Country</label>
                         <input  id="UpdateCountry" type="text" class="form-control" name="country" th:value="${user.country}"/>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="UpdateCar" class="form-label">Car</label>
+                    <div class="mb-3 text-center">
+                        <label for="UpdateCar" class="form-label " style="font-weight: bold;">Car</label>
                         <input id="UpdateCar" type="text" class="form-control" name="car" th:value="${user.car}"/>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Roles</label>
-                        <div>
-                            <input type="checkbox" id="roleAdmin" name="roles" value="2" />
-                            <label for="roleAdmin">ADMIN</label>
-                        </div>
-
-                        <div>
-                            <input type="checkbox" id="roleUser" name="roles" value="1" />
-                            <label for="roleUser">USER</label>
-                        </div>
-
+                    <div class="mb-3 text-center">
+                        <label class="form-label" for="roleSelect"><b>Role</b></label>
+                        <select id="roleSelect" name="roles" class="form-select" multiple size="2">
+                            <option value="2">ADMIN</option>
+                            <option value="1">USER</option>
+                        </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="UpdatePassword" class="form-label">Password</label>
+
+                    <div class="mb-3 text-center">
+                        <label for="UpdatePassword" class="form-label" style="font-weight: bold;">Password</label>
                         <input id="UpdatePassword" type="password" class="form-control" name="password" placeholder="Enter new password"/>
                     </div>
                     <button type="submit" class="btn btn-primary">Update</button>
@@ -234,30 +238,35 @@ with roles:
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Удалить пользователя</h5>
+                <h5 class="modal-title">Delete User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form th:action="@{/admin/delete}" method="post">
                     <input type="hidden" name="id" th:value="${user.id}"/>
 
-                    <div class="mb-3">
-                        <label for="DeleteUsername" class="form-label">Username</label>
+                    <div class="mb-3 text-center">
+                        <label for="DeleteUsername" class="form-label" style="font-weight: bold;">Username</label>
                         <input id="DeleteUsername" type="text" class="form-control" th:value="${user.username}" readonly/>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="DeleteCountry" class="form-label">Country</label>
+                    <div class="mb-3 text-center">
+                        <label for="DeleteCountry" class="form-label" style="font-weight: bold;">Country</label>
                         <input  id="DeleteCountry" type="text" class="form-control" th:value="${user.country}" readonly/>
                     </div>
 
-                    <div class="mb-3">
-                        <label  for="DeleteCar" class="form-label">Car</label>
+                    <div class="mb-3 text-center">
+                        <label  for="DeleteCar" class="form-label" style="font-weight: bold;">Car</label>
                         <input  id="DeleteCar" type="text" class="form-control" th:value="${user.car}" readonly/>
                     </div>
 
-                    <div class="mb-3">
-                        <label  for="DeletePassword" class="form-label">Password</label>
+                    <div class="mb-3 text-center">
+                        <label for="DeleteRole" class="form-label" style="font-weight: bold;">Role</label>
+                        <input id="DeleteRole" type="text" class="form-control" th:value="${user.roles}" readonly/>
+                    </div>
+
+                    <div class="mb-3 text-center">
+                        <label  for="DeletePassword" class="form-label" style="font-weight: bold;">Password</label>
                         <input  id="DeletePassword" type="password" class="form-control" placeholder="password is hidden" readonly/>
                     </div>
 

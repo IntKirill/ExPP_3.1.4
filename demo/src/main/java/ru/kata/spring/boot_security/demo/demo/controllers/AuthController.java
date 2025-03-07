@@ -13,7 +13,9 @@ import ru.kata.spring.boot_security.demo.demo.model.Role;
 import ru.kata.spring.boot_security.demo.demo.model.User;
 import ru.kata.spring.boot_security.demo.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.demo.repositories.UserRepository;
+import ru.kata.spring.boot_security.demo.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.demo.service.RoleServiceImpl;
+import ru.kata.spring.boot_security.demo.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.demo.service.UserServiceImpl;
 
 import java.security.Principal;
@@ -24,15 +26,15 @@ import java.util.stream.Collectors;
 public class AuthController {
 
 
-    private final UserServiceImpl userService;
-    private final RoleServiceImpl roleService;
+    private final UserService userService;
+    private final RoleService roleService;
 
 
 
     @Autowired
     public AuthController(
-            UserServiceImpl userService
-            , RoleServiceImpl roleService) {
+            UserService userService
+            , RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }

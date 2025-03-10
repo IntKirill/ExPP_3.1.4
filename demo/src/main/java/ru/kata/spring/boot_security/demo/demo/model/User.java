@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -32,6 +34,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    public List<Long> getRolesIds() {
+        return roles.stream().map(Role::getId).collect(Collectors.toList());
+    }
 
     public Set<Role> getRoles() {
         return roles;

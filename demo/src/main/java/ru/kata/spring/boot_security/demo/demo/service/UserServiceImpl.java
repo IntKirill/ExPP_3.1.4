@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Пользователь с  id "  + id + " не найден (это сообщение из сервиса)"));
     }
     @Transactional
     @Override
@@ -41,15 +41,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void saveUser(User user) {
-      /*   Role userRole = roleService.findByName("ROLE_USER")
-                .orElseThrow(() -> new IllegalStateException("Role 'ROLE_USER' not found"));
-        user.getRoles().add(userRole);*/
-
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
         }
     }
+
+
     @Transactional
     @Override
     public void deleteUser(Long id) {

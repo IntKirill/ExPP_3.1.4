@@ -65,12 +65,12 @@ with roles:
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td th:text="${user.id}"></td>
-                                            <td th:text="${user.username}"></td>
-                                            <td th:text="${user.country}"></td>
-                                            <td th:text="${user.car}"></td>
-                                            <td th:text="${user.roles}"></td>
-                                            <td th:text="${user.password}"></td>
+                                            <td id="userId"></td>
+                                            <td id="username"></td>
+                                            <td id="country"></td>
+                                            <td id="car"></td>
+                                            <td id="roles"></td>
+                                            <td id="password">********</td> <!-- Пароль скрыт -->
                                         </tr>
                                         </tbody>
                                     </table>
@@ -83,6 +83,7 @@ with roles:
         </div>
     </div>
 </div>
+<script src="/js/user.js"></script>
 
 </body>
 </html>

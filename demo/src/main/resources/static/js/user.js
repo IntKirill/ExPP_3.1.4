@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function loadUserInfo() {
-    fetch("/api/user")  // эндпоинт должен возвращать текущего пользователя
+    fetch("/api/user")  //
         .then(response => {
             if (!response.ok) {
                 throw new Error("Failed to load user data");

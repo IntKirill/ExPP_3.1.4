@@ -35,21 +35,16 @@ public class RestControler {
         this.roleService = roleService;
     }
 
-
-
-        @GetMapping("/user")
-        public ResponseEntity<User> getCurrentUser(Principal principal) {
-            User user = userService.findByUsername(principal.getName());
-            return ResponseEntity.ok(user);
-        }
-
-
+    @GetMapping("/user")
+    public ResponseEntity<User> getCurrentUser(Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        return ResponseEntity.ok(user);
+    }
 
     @GetMapping("/admin")
     public List<User> showAllUser() {
         return userService.getAllUsers();
     }
-
 
     @GetMapping("/admin/{id}")
     public ResponseEntity<?> getUser(@PathVariable long id) {
@@ -61,31 +56,25 @@ public class RestControler {
         return ResponseEntity.ok(user); // 200 OK + JSON
     }
 
-
-
     @PostMapping("/admin/new")
-     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User>  createUser(@RequestBody User user) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         System.out.println("Received User: " + user);  // Логируем, что приходит в запросе
         userService.saveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
 
     }
 
-    // Получить данные пользователя по ID
     @GetMapping("/update/{id}")
-     @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getEditUserForm(@PathVariable("id") long id) {
         User user = userService.getUserById(id);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Пользователь с ID " + id + " не найден");
         }
-
-
         List<Role> roles = roleService.getAllRoles();
 
-        // Создаём ответ в виде JSON
         Map<String, Object> response = new HashMap<>();
         response.put("user", user);
         response.put("roles", roles);
@@ -95,29 +84,25 @@ public class RestControler {
 
     // Обновить пользователя
     @PostMapping("/admin/update/{id}")
-     @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable("id") long id,
-                                        @RequestBody @Valid User user,
-                                        @RequestParam(value = "roles", required = false) List<Long> roleIds,
+                                        @RequestBody User user, // Получаем данные пользователя, включая роли
                                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Ошибка валидации данных пользователя");
         }
 
         try {
-            System.out.println("Updated roles: " + user.getRoles()); // Печатаем роли для отладки
-            userService.updateUser(id, user, roleIds);
+            System.out.println("Updated roles: " + user.getRolesIds()); // Печатаем роли для отладки
+            userService.updateUser(id, user, user.getRolesIds()); // Передаем роли, полученные из тела запроса
             return ResponseEntity.ok("Пользователь успешно обновлён!");
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-
-
-
     @DeleteMapping("/admin/delete/{id}")
-     @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         System.out.println("Deleting user with id: " + id);
         try {
@@ -127,10 +112,6 @@ public class RestControler {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
-    }
-    @GetMapping("/admin/currentUser")
-    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
-        return ResponseEntity.ok(authentication.getAuthorities());
     }
 
 }

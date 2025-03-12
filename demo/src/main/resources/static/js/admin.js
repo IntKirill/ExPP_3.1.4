@@ -1,307 +1,167 @@
 document.addEventListener("DOMContentLoaded", function () {
-    loadUsers(); // Загружаем пользователей при загрузке страницы
+    loadUsers();
 
-    const logoutButton = document.getElementById("logoutButton");
-
-    if (logoutButton) {
-        logoutButton.addEventListener("click", function (event) {
-            fetch("/logout", { method: "POST" })  // Отправляем POST-запрос на logout
-                .then(() => window.location.href = "/login?logout") // Перенаправляем
-                .catch(err => console.error("Logout error:", err));
-        });
-    }
+    document.getElementById("createUserBtn").addEventListener("click", createUser);
 });
 
 
 function loadUsers() {
-    fetch("/api/admin")  // Запрос на получение всех пользователей через REST API
+    fetch("/api/admin")
         .then(response => response.json())
         .then(users => {
-            console.log("Полученные пользователи:", users);
-            let tableBody = document.getElementById("userTable").getElementsByTagName('tbody')[0];
-            tableBody.innerHTML = ""; // Очищаем таблицу
-
+            const tbody = document.querySelector("#userTable tbody");
+            tbody.innerHTML = "";
             users.forEach(user => {
-                let rolesString = user.roles.map(role => role.name).join(", ");
-                let row = `<tr>
+                const row = document.createElement("tr");
+                row.innerHTML = `
                     <td>${user.id}</td>
                     <td>${user.username}</td>
                     <td>${user.country}</td>
                     <td>${user.car}</td>
-                    <td>${rolesString}</td>
+                    <td>${user.roles.map(role => role.name).join(", ")}</td>
                     <td>${user.password}</td>
-                    <td>
-                        <button onclick="openUpdateModal(${user.id})">Update</button>
-                    </td>
-                    <td>
-                        <button onclick="deleteUser(${user.id})">Delete</button>
-                    </td>
-                </tr>`;
-                tableBody.innerHTML += row; // Добавляем строку в таблицу
+                    <td><button class="btn btn-warning" onclick="editUser(${user.id})">Update</button></td>
+                    <td><button class="btn btn-danger" onclick="deleteUser(${user.id})">Delete</button></td>
+                `;
+                tbody.appendChild(row);
             });
         })
-        .catch(error => console.error("Ошибка загрузки пользователей:", error));
+        .catch(error => console.error("Error loading users:", error));
 }
 
-// Функция для открытия модального окна для обновления
-function openUpdateModal(userId) {
-    fetch(`/api/update/${userId}`)  // Получаем данные конкретного пользователя и доступные роли
-        .then(response => response.json())
-        .then(data => {
-            // Заполняем данные в форме модального окна
-            document.getElementById("UpdateUsername").value = data.user.username;
-            document.getElementById("UpdateCountry").value = data.user.country;
-            document.getElementById("UpdateCar").value = data.user.car;
-            document.getElementById("UpdatePassword").value = "";
-
-            let roleSelect = document.getElementById("roleSelect");
-            roleSelect.innerHTML = '';  // Очищаем текущие опции
-
-            // Добавляем все доступные роли
-            data.roles.forEach(role => {
-                let option = document.createElement("option");
-                option.value = role.id;  // Привязываем id роли к значению option
-                option.text = role.name.replace("ROLE_", "");  // Название роли (например, "ADMIN", "USER")
-                roleSelect.appendChild(option);  // Добавляем опцию в select
-            });
-
-            // Устанавливаем выбранные роли
-            data.user.roles.forEach(role => {
-                let option = roleSelect.querySelector(`option[value='${role.id}']`);
-                if (option) {
-                    option.selected = true;  // Помечаем роль как выбранную
-                }
-            });
-
-            // Сохраняем userId в data-id
-            document.getElementById("UpdateUsername").setAttribute("data-id", data.user.id);
-
-            // Открываем модальное окно с помощью Bootstrap
-            const modal = new bootstrap.Modal(document.getElementById("updateModal"));
-            modal.show();
-        })
-        .catch(error => console.error('Ошибка при загрузке данных пользователя:', error));
-}
-
-
-
-
-function updateUser() {
-    const userId = document.getElementById("UpdateUsername").getAttribute("data-id");
-    console.log("userId:", userId);  // Логируем userId
-
-    if (!userId) {
-        console.error("Ошибка: ID пользователя не найден!");
-        return; // Прерываем выполнение, если ID не найден
-    }
-
-    // Извлекаем данные из формы в модальном окне
-    const username = document.getElementById("UpdateUsername").value;
-    const country = document.getElementById("UpdateCountry").value;
-    const car = document.getElementById("UpdateCar").value;
-    const password = document.getElementById("UpdatePassword").value;
-
-    // Получаем выбранные роли (по значениям ID)
-    const roleMapping = { 2: "ROLE_ADMIN", 1: "ROLE_USER" }; // Сопоставляем ID ролей с их именами
-    const roleSelect = document.getElementById("roleSelect");
-    const roles = Array.from(roleSelect.selectedOptions).map(option => {
-        const roleId = parseInt(option.value); // Получаем ID из value
-        return { id: roleId, name: roleMapping[roleId] }; // Маппируем ID в объект с name
-    });
-
-    const updatedUser = {
-        username: username,
-        country: country,
-        car: car,
-        roles: roles,  // Передаем массив выбранных ролей
-        password: password
-    };
-    console.log("Roles:", roles);
-    // Логируем обновленные данные для дебага
-    console.log("Updated user data:", updatedUser);
-
-    // Отправка запроса на обновление данных пользователя
-    fetch('/api/admin/update/' + userId, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatedUser)
-    })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(text || 'Error occurred');
-                });
-            }
-            // Получаем ответ как текст
-            return response.text();
-        })
-        .then(data => {
-            // data теперь это строка, например, "Пользователь успешно обновлён!"
-            console.log('Response:', data);
-
-            alert(data);  // Покажем сообщение о том, что пользователь успешно обновлён
-
-            loadUsers();  // Загружаем список пользователей заново
-            // Закрываем модальное окно (если используем Bootstrap)
-            const modal = document.getElementById('updateModal');  // ID вашего модального окна
-            const modalInstance = bootstrap.Modal.getInstance(modal); // Получаем экземпляр модального окна
-            modalInstance.hide();  // Закрываем модальное окно
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('There was an error updating the user: ' + error.message);
-        });
-}
-document.getElementById("createUserBtn").addEventListener("click", createUser);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Функция добавления
 function createUser() {
-    // Получаем значения из формы
-    const username = document.getElementById("newUsername").value;
-    const country = document.getElementById("newCountry").value;
-    const car = document.getElementById("newCar").value;
-    const password = document.getElementById("newPassword").value;
-
-    // Получаем выбранные роли
-    const roleSelect = document.getElementById('roleNew');
-    const roles = Array.from(roleSelect.selectedOptions).map(option => {
-        return { id: parseInt(option.value, 10), name: option.text }; // Преобразуем в объект с id и name
-    });
-    // Создаем объект нового пользователя
-    const newUser = {
-        username: username,
-        country: country,
-        car: car,
-        roles: roles,  // Передаем массив выбранных ролей
-        password: password
+    const user = {
+        username: document.getElementById("newUsername").value,
+        country: document.getElementById("newCountry").value,
+        car: document.getElementById("newCar").value,
+        password: document.getElementById("newPassword").value,
+        roles: Array.from(document.getElementById("roleNew").selectedOptions).map(opt => ({id: parseInt(opt.value)}))
     };
 
-    // Логируем данные для дебага
-    console.log("New user data:", newUser);
-
-    // Отправка запроса на создание нового пользователя
-    fetch('/api/admin/new', {  // Убедитесь, что путь на сервере верный
-        method: 'POST',  // Обратите внимание на правильный регистр HTTP метода
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newUser)  // Отправляем данные нового пользователя
+    fetch("/api/admin/new", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(user)
     })
         .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(text || 'Error occurred');
-                });
-            }
-            // Получаем ответ как текст (например, "Пользователь успешно создан!")
-            return response.text();
+            if (!response.ok) throw new Error("Failed to create user");
+            return response.json();
         })
-        .then(data => {
-            // data теперь это строка, например, "Пользователь успешно создан!"
-            console.log('Response:', data);
+        .then(() => {
+            loadUsers(); // Обновляем таблицу пользователей
+            document.getElementById("createUserForm").reset(); // Очищаем форму
 
-            alert(data);  // Покажем сообщение о том, что пользователь успешно создан
-
-            loadUsers();  // Загружаем список пользователей заново (если такая функция существует)
-         //   window.location.href = '/admin';
-            // Закрываем модальное окно (если используем Bootstrap)
-            const modal = document.getElementById('newUser');  // ID вашего модального окна
-            if (modal) {
-                const modalInstance = bootstrap.Modal.getInstance(modal); // Получаем экземпляр модального окна
-                modalInstance.hide();  // Закрываем модальное окно
-            } else {
-                console.error('Modal element with ID "newUser" not found!');
-            }
+            let usersTableTab = new bootstrap.Tab(document.querySelector("#usersTable-tab"));
+            usersTableTab.show();
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('There was an error creating the user: ' + error.message);
-        });
+        .catch(error => console.error("Error creating user:", error));
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Функция для открытия модального окна с данными пользователя
-function openDeleteModal(userId) {
-    // Выполняем запрос на получение данных пользователя
-    fetch(`/api/admin/${userId}`)
-        .then(response => response.json())
-        .then(user => {
-            // Заполняем данные в модальном окне
-            document.getElementById("DeleteUsername").value = user.username;
-            document.getElementById("DeleteCountry").value = user.country;
-            document.getElementById("DeleteCar").value = user.car;
-            document.getElementById("DeleteRole").value = user.roles.map(role => role.name).join(", ");
-            document.getElementById("DeletePassword").value = "password is hidden"; // Пароль скрыт
-
-            // Заполняем скрытое поле id для отправки при удалении
-            document.querySelector("#deleteModal-" + userId + " form input[name='id']").value = user.id;
-
-            // Получаем экземпляр модального окна по ID
-            const modalElement = document.getElementById(`deleteModal-${userId}`);
-            const modalInstance = new bootstrap.Modal(modalElement); // Получаем экземпляр модального окна
-
-            // Открываем модальное окно
-            modalInstance.show();
-        })
-        .catch(error => {
-            console.error("Error fetching user data:", error);
-            alert("Error fetching user data");
-        });
-}
-
-
-// Функция для удаления пользователя
-function deleteUser(userId) {
+function deleteUser(id) {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
-    fetch(`/api/admin/delete/${userId}`, {
-        method: 'DELETE',
+    fetch(`/api/admin/${id}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to fetch user data");
+            return response.json();
+        })
+        .then(user => {
+            const isAdmin = user.roles.some(role => role.name === "ROLE_ADMIN");
+
+            if (isAdmin) {
+                alert("You cannot delete a user with the ADMIN role!");
+                return;
+            }
+
+            fetch(`/api/admin/delete/${id}`, {method: "DELETE"})
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to delete user");
+                    return response.text();
+                })
+                .then(() => loadUsers())
+                .catch(error => console.error("Error deleting user:", error));
+        })
+        .catch(error => console.error("Error fetching user data:", error));
+}
+
+function editUser(id) {
+    fetch(`/api/admin/${id}`)
+        .then(response => response.json())
+        .then(user => {
+            document.getElementById("UpdateUsername").value = user.username;
+            document.getElementById("UpdateCountry").value = user.country;
+            document.getElementById("UpdateCar").value = user.car;
+            document.getElementById("UpdatePassword").value = "";
+
+            const roleSelect = document.getElementById("roleSelect");
+            Array.from(roleSelect.options).forEach(option => {
+                option.selected = user.roles.some(role => role.id == option.value);
+            });
+            document.getElementById("updateModal").dataset.userId = id;
+            new bootstrap.Modal(document.getElementById("updateModal")).show();
+        })
+        .catch(error => console.error("Error loading user:", error));
+}
+
+function updateUser() {
+    const id = document.getElementById("updateModal").dataset.userId;
+
+    fetch(`/api/admin/${id}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to fetch user data");
+            return response.json();
+        })
+        .then(user => {
+            const isAdmin = user.roles.some(role => role.name === "ROLE_ADMIN");
+
+            if (isAdmin) {
+                alert("You cannot update a user with the ADMIN role!");
+                return;
+            }
+
+            const updatedUser = {
+                username: document.getElementById("UpdateUsername").value,
+                country: document.getElementById("UpdateCountry").value,
+                car: document.getElementById("UpdateCar").value,
+                password: document.getElementById("UpdatePassword").value,
+                roles: Array.from(document.getElementById("roleSelect").selectedOptions)
+                    .map(opt => ({id: parseInt(opt.value)}))
+            };
+
+            fetch(`/api/admin/update/${id}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(updatedUser)
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to update user");
+                    return response.text();
+                })
+                .then(() => {
+                    loadUsers();
+                    bootstrap.Modal.getInstance(document.getElementById("updateModal")).hide();
+                })
+                .catch(error => console.error("Error updating user:", error));
+        })
+        .catch(error => console.error("Error fetching user data:", error));
+}
+
+document.getElementById("logoutButton").addEventListener("click", function () {
+    fetch("/logout", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json'
-        }
+            "Content-Type": "application/json"
+        },
     })
-        .then(response => response.text().then(text => ({ status: response.status, body: text })))
-        .then(({ status, body }) => {
-            if (status === 200) {
-                location.reload();
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "/login";
             } else {
-                throw new Error(`Error ${status}: ${body}`);
+                alert("Ошибка при выходе из системы.");
             }
         })
         .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred: " + error.message);
+            console.error("Ошибка при выполнении логаута:", error);
         });
-}
+});

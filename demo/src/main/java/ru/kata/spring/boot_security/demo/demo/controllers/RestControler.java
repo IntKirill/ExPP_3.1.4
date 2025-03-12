@@ -1,23 +1,18 @@
 package ru.kata.spring.boot_security.demo.demo.controllers;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.demo.ExceptionHandling.NoSuchUserException;
-import ru.kata.spring.boot_security.demo.demo.ExceptionHandling.UserIncorentData;
 import ru.kata.spring.boot_security.demo.demo.model.Role;
 import ru.kata.spring.boot_security.demo.demo.model.User;
 import ru.kata.spring.boot_security.demo.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.demo.service.UserService;
-
 import java.security.Principal;
 import java.util.HashMap;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Map;
 
